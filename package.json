@@ -9,15 +9,21 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+     "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
+   "commands": [
+    {
         "command": "error-ai-fixer.helloWorld",
         "title": "Hello World"
-      }
-    ]
+    },
+    {
+        "command": "error-ai-fixer.triggerDemo",
+        "title": "AI Error Fixer: Trigger Demo"
+    }
+]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
