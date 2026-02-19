@@ -6,24 +6,30 @@
   "engines": {
     "vscode": "^1.109.0"
   },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-     "onStartupFinished"
-  ],
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
-   "commands": [
-    {
+    "commands": [
+      {
         "command": "error-ai-fixer.helloWorld",
         "title": "Hello World"
-    },
-    {
+      },
+      {
         "command": "error-ai-fixer.triggerDemo",
         "title": "AI Error Fixer: Trigger Demo"
+      }
+    ],
+    "configuration": {
+      "title": "AI Error Fixer",
+      "properties": {
+        "errorAiFixer.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your OpenAI API key"
+        }
+      }
     }
-]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -50,5 +56,8 @@
     "typescript": "^5.9.3",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2"
+  },
+  "dependencies": {
+    "openai": "^4.0.0"
   }
 }
