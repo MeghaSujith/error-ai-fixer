@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 import * as vscode from 'vscode';
 
 export async function getAIExplanation(
@@ -11,16 +11,19 @@ export async function getAIExplanation(
     const apiKey = config.get<string>('openaiApiKey');
 
     if (!apiKey) {
-        return "⚠️ No API key found. Please add your OpenAI API key in VS Code settings.";
+        vscode.window.showErrorMessage(
+            '⚠️ No API key found. Go to Settings and search for AI Error Fixer to add your key.'
+        );
+        return "No API key configured.";
     }
 
-    const client = new OpenAI({ apiKey });
+    const client = new Groq({ apiKey });
 
     const systemPrompt = `You are an AI assistant integrated into VS Code. 
-Your job is to explain coding errors to beginner developers in simple, friendly language. 
+Your job is to explain coding errors to beginner developers in simple friendly language. 
 When given an error message, a file name, and a line number, explain:
 1. What the error means in plain English
-2. Why it likely happened
+2. Why it likely happened  
 3. How to fix it with a short code example
 Keep explanations under 5 sentences. Avoid technical jargon.`;
 
@@ -31,7 +34,7 @@ Please explain this error simply.`;
 
     try {
         const response = await client.chat.completions.create({
-            model: 'gpt-3.5-turbo',
+            model: 'llama3-8b-8192',
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt }
@@ -39,7 +42,7 @@ Please explain this error simply.`;
             max_tokens: 150
         });
 
-        return response.choices[0].message.content || 
+        return response.choices[0].message.content ||
                "Sorry, I couldn't generate an explanation.";
 
     } catch (error) {
