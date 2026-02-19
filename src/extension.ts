@@ -1,26 +1,51 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { startErrorDetection } from './errorDetector';
+import { showErrorPopup } from './popup';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "error-ai-fixer" is now active!');
+    console.log('🚀 AI Error Fixer extension is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('error-ai-fixer.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from error-ai-fixer!');
-	});
+    // Original hello world command
+    const helloCommand = vscode.commands.registerCommand(
+        'error-ai-fixer.helloWorld',
+        () => {
+            vscode.window.showInformationMessage('Hello World from AI Error Fixer!');
+        }
+    );
 
-	context.subscriptions.push(disposable);
+    // Demo command — triggers a fake error popup for the presentation
+    const demoCommand = vscode.commands.registerCommand(
+        'error-ai-fixer.triggerDemo',
+        () => {
+            showErrorPopup(
+                "Type 'string' is not assignable to type 'number'.",
+                'demo-file.ts',
+                7
+            );
+        }
+    );
+
+    // Start Jovita's real error detector (logs to Debug Console)
+    startErrorDetection(context);
+
+    // Connect real errors to Jesna's popup
+    const errorListener = vscode.languages.onDidChangeDiagnostics((event) => {
+        event.uris.forEach((uri) => {
+            const diagnostics = vscode.languages.getDiagnostics(uri);
+            diagnostics.forEach((diag) => {
+                if (diag.severity === vscode.DiagnosticSeverity.Error) {
+                    showErrorPopup(
+                        diag.message,
+                        uri.fsPath,
+                        diag.range.start.line + 1
+                    );
+                }
+            });
+        });
+    });
+
+    context.subscriptions.push(helloCommand, demoCommand, errorListener);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
