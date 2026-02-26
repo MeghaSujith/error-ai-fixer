@@ -3,10 +3,11 @@
     "module": "Node16",
     "target": "ES2022",
     "lib": ["ES2022", "dom"],
+    "types": ["node","mocha"],
     "outDir": "out",
     "rootDir": "src",
     "sourceMap": true,
-    "strict": true
+    "strict": false
   },
   "include": ["src"],
   "exclude": ["node_modules", ".vscode-test"]
